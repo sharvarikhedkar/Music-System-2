@@ -1,6 +1,6 @@
 
 
-Run project and activate all microsrvices:
+Run project and activate all microservices:
 -----------------------------
 foreman start --formation users=3,tracks=3,playlists=3,xspf=3
 
