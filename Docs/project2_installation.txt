@@ -1,0 +1,175 @@
+minIO installation:
+==========================
+
+curl -O https://dl.minio.io/server/minio/release/linux-amd64/minio
+
+sudo chmod +x minio
+
+sudo mv minio /usr/local/bin
+sudo useradd -r minio-user -s /sbin/nologin
+sudo chown minio-user:minio-user /usr/local/bin/minio
+sudo mkdir /usr/local/share/minio
+sudo chown minio-user:minio-user /usr/local/share/minio
+
+sudo mkdir /etc/minio
+
+
+sudo chown minio-user:minio-user /etc/minio
+
+sudo nano /etc/default/minio
+
+[ MINIO_VOLUMES="/usr/local/share/minio/"
+ MINIO_OPTS="-C /etc/minio --address localhost:9000" ]
+ 
+ 
+ curl -O https://raw.githubusercontent.com/minio/minio-service/master/linux-systemd/minio.service
+
+nano minio.service
+
+sudo mv minio.service /etc/systemd/system
+
+sudo systemctl daemon-reload
+
+sudo systemctl enable minio
+
+sudo systemctl start minio
+
+sudo systemctl status minio
+
+sudo ufw allow 9000
+
+sudo systemctl restart ufw
+
+--to get secret and access key :
+/usr/local/share/minio/.minio.sys/config/config.json
+
+"accessKey": "FYSW7P5XQJWMW0EHHMNU",
+"secretKey": "jm8epFvaOsMt5luGsqUfKClxPnzUALfXd7KvNTWZ",
+
+----------------------------------------------------------------------
+
+Kong API Installation
+==============================
+sudo apt-get update
+
+sudo apt-get install openssl libpcre3 procps perl
+
+sudo dpkg -i kong-1.4.0.*.deb (go to the path where packge is downloaded)
+
+----
+sudo apt install --yes postgresql
+
+sudo -u postgres psql -c "CREATE USER kong WITH ENCRYPTED PASSWORD 'kong'"
+
+sudo -u postgres psql -c 'CREATE DATABASE kong OWNER kong'
+
+sudo cp /etc/kong/kong.conf.default /etc/kong/kong.conf
+
+sudo kong migrations bootstrap
+
+------Start kong------
+
+ulimit -n 4096 && sudo kong start
+
+Test kong => curl -i http://localhost:8001/
+
+--Adding new service and route to kong 
+
+1. Creating new service
+
+curl -i -X POST \
+  --url http://localhost:8001/services/ \
+  --data 'name=media' \
+  --data 'url=http://localhost:9000'
+  
+curl -i -X DELETE --url http://localhost:8001/serices/b37a1c98-03c2-45de-a732-56fac96481ef  
+  
+  
+2. Adding route
+
+curl -i -X POST \
+  --url http://localhost:8001/services/media/routes \
+  --data 'hosts[]=localhost'
+  --data 'paths[]=/tracks'
+  
+3. forwarding request through kong
+
+curl -i -X GET \
+  --url http://localhost:8000/media \
+  --header 'Host: localhost:9000' \
+  -H "X-ApiKeys: accessKey={FYSW7P5XQJWMW0EHHMNU}; secretKey={jm8epFvaOsMt5luGsqUfKClxPnzUALfXd7KvNTWZ}"
+  
+  
+  
+  
+===================
+User: 5000
+Tracks : 5100
+Playlist : 5200
+Description : 5300 
+
+===================Adding Services/Routes for microservices in kong API=========
+
+1. Playlist :
+
+curl -i -X POST \
+  --url http://localhost:8001/services/ \
+  --data 'name=playlists' \
+  --data 'url=http://localhost:5200' \
+  --data 'path=/playlists'
+  
+
+curl -i -X POST http://localhost:8001/routes/ \
+    -d 'hosts[]=localhost' \
+    -d 'paths[]=/playlists' \
+    -d 'service.id=9c491bda-2b85-4796-9ba3-81c9bc8cb583'
+    
+    
+2. Tracks :
+
+curl -i -X POST \
+  --url http://localhost:8001/services/ \
+  --data 'name=tracksbyid' \
+  --data 'url=http://localhost:5100' \
+  --data 'path=/tracksbyid'
+    
+curl -i -X POST http://localhost:8001/routes/ \
+    -d 'hosts[]=localhost' \
+    -d 'paths[]=/tracksbyid' \
+    -d 'service.id=2577b7e3-529c-4917-9ae3-b3beb25c0098'
+    
+    
+3. User :
+
+curl -i -X POST \
+  --url http://localhost:8001/services/ \
+  --data 'name=users' \
+  --data 'url=http://localhost:5000' \
+  --data 'path=/users'
+  
+
+curl -i -X POST http://localhost:8001/routes/ \
+    -d 'hosts[]=localhost' \
+    -d 'paths[]=/users' \
+    -d 'service.id=6695c501-a9cf-4b0f-94ca-16f97d59e99a'
+    
+    
+4. Description :
+
+curl -i -X POST \
+  --url http://localhost:8001/services/ \
+  --data 'name=descriptions' \
+  --data 'url=http://localhost:5300' \
+  --data 'path=/descriptions'
+  
+
+curl -i -X POST http://localhost:8001/routes/ \
+    -d 'hosts[]=localhost' \
+    -d 'paths[]=/descriptions' \
+    -d 'service.id=bc856aa1-07cb-425b-bd64-66f1f4181efa'
+    
+    
+
+ 
+ 
+ 

@@ -1,0 +1,90 @@
+# This is testcases users microservices
+test_name: Create a new user
+
+stages:
+  - name: Make sure we are getting success response after posting
+
+    request:
+      url: http://127.0.0.1:5000/users
+      method: POST
+      json:
+        user_name: testuser13
+        password: abcd
+        display_name: test1display13
+        email_id: test13@test.com
+        home_url: test13/homeurl
+      headers:
+        content-type: application/json
+
+    # The expected response code 201
+    response:
+      status_code: 201
+
+
+---
+test_name: Retrieve a user’s profile, which includes all information except the hashed password
+
+stages:
+  - name: Make sure we are getting all information of specific user
+
+    request:
+      url: http://127.0.0.1:5000/users/testuser13
+      method: GET
+
+    # The expected response code 200
+    response:
+      status_code: 200
+
+---
+test_name: Change a user’s password
+
+stages:
+  - name: Make sure we are getting success response for data update
+
+    request:
+      url: http://127.0.0.1:5000/users
+      method: PUT
+      json:
+        user_name: testuser13
+        password: abcd
+        new_password: xyz
+      headers:
+        content-type: application/json
+
+    # The expected response code 200
+    response:
+      status_code: 200
+
+---
+test_name:  authenticate a user
+
+stages:
+  - name: Make sure we are getting success response for authentication
+
+    request:
+      url: http://127.0.0.1:5000/users/auth
+      method: POST
+      json:
+        user_name: testuser13
+        password: xyz
+      headers:
+        content-type: application/json
+
+    # The expected response code 200
+    response:
+      status_code: 200
+
+---
+
+test_name: Delete a user
+
+stages:
+  - name: Make sure we are getting success response
+
+    request:
+      url: http://127.0.0.1:5000/users/testuser13
+      method: DELETE
+      
+    # The expected response code 200
+    response:
+      status_code: 200

@@ -1,0 +1,77 @@
+---
+# This is testcases playlists microservices
+test_name: Create a new playlist
+
+stages:
+  - name: Make sure we are getting success response
+
+    request:
+      url: http://127.0.0.1:5200/playlists/27
+      method: POST
+      json:
+        user_name: test
+        playlist_title: Playlist02
+        description: mfavtrack1
+        track_id: 79387370-9480-45e4-bbf0-0d538acf190a
+      headers:
+        content-type: application/json
+
+    # The expected response code 201
+    response:
+      status_code: 201
+
+---
+test_name: Retrieve a playlist
+
+stages:
+  - name: Make sure we are getting success response
+
+    request:
+      url: http://127.0.0.1:5200/playlists/27
+      method: GET
+      
+    # The expected response code 200
+    response:
+      status_code: 200
+
+---
+test_name: List all playlists
+
+stages:
+  - name: Make sure we are getting success response
+
+    request:
+      url: http://127.0.0.1:5200/playlists
+      method: GET
+      
+    # The expected response code 200
+    response:
+      status_code: 200
+
+---
+test_name: Lists playlists created by a particular user
+
+stages:
+  - name: Make sure we are getting success response
+
+    request:
+      url: http://127.0.0.1:5200/playlistsbyuser/SwatiBade
+      method: GET
+      
+    # The expected response code 200
+    response:
+      status_code: 200
+
+---
+test_name: Delete a playlist
+
+stages:
+  - name: Make sure we are getting success response
+
+    request:
+      url: http://127.0.0.1:5200/playlists/My first Playlist 2
+      method: DELETE
+      
+    # The expected response code 200
+    response:
+      status_code: 200

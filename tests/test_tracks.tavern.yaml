@@ -1,0 +1,73 @@
+
+
+# This is testcases tracks microservices
+test_name: Create a new track
+
+stages:
+  - name: Make sure we are getting success response
+
+    request:
+      url: http://127.0.0.1:5100/tracks
+      method: POST
+      json:
+        track_title: testtrack
+        album_title: testalbum
+        track_artist: testartist
+        track_length: 500
+        media_url: test12365/testtrack/test.mp3
+        album_url: test/testalbum
+      headers:
+        content-type: application/json
+
+    # The expected response code 201
+    response:
+      status_code: 201
+
+---
+test_name: Retrieve a track
+
+stages:
+  - name: Make sure we are getting success response
+
+    request:
+      url: http://127.0.0.1:5100/tracks
+      method: GET
+      
+    # The expected response code 200
+    response:
+      status_code: 200
+
+---
+test_name: Edit a track
+
+stages:
+  - name: Make sure we are getting success response
+
+    request:
+      url: http://127.0.0.1:5100/tracks
+      method: PUT
+      json:
+        track_id: 79387370-9480-45e4-bbf0-0d538acf190a
+        new_album_title: album change name
+        new_track_title: trackChange 005
+        new_media_url: //http://localhost:9000/tracks/Wavin Flag.mp3
+      headers:
+        content-type: application/json
+
+    # The expected response code 200
+    response:
+      status_code: 200
+
+---
+test_name: Delete a track
+
+stages:
+  - name: Make sure we are getting success response
+
+    request:
+      url: http://127.0.0.1:5100/tracks/26051719-4e83-4fcd-afaa-3f617dbf5ebb
+      method: DELETE
+      
+    # The expected response code 200
+    response:
+      status_code: 200

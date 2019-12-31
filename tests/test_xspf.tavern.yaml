@@ -1,0 +1,15 @@
+
+# This is testcases xspf microservices
+test_name: Retrieve a  xspf of a playlist id
+
+stages:
+  - name: Make sure we are getting success response
+
+    request:
+      url: http://127.0.0.1:5400/playlist/27
+      method: GET
+      
+    # The expected response code 200
+    response:
+      status_code: 200
+

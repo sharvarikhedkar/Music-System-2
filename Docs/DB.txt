@@ -1,0 +1,105 @@
+
+.open track_shard1;
+
+ create table tracks
+(
+	track_id varchar(500) PRIMARY KEY,
+	track_title varchar(50) not null,
+	album_title varchar(30) not null,
+	track_artist varchar(30) not null,
+	track_length integer not null,
+	media_url varchar(200) not null unique,
+	album_url varchar(200),
+	created_date datetime default current_timestamp ,
+	updated_date datetime default current_timestamp 
+);
+
+.open track_shard2;
+
+ create table tracks
+(
+	track_id varchar(500) PRIMARY KEY,
+	track_title varchar(50) not null,
+	album_title varchar(30) not null,
+	track_artist varchar(30) not null,
+	track_length integer not null,
+	media_url varchar(200) not null unique,
+	album_url varchar(200),
+	created_date datetime default current_timestamp ,
+	updated_date datetime default current_timestamp 
+);
+
+
+.open track_shard3;	
+	
+ create table tracks
+(
+	track_id varchar(500) PRIMARY KEY,
+	track_title varchar(50) not null,
+	album_title varchar(30) not null,
+	track_artist varchar(30) not null,
+	track_length integer not null,
+	media_url varchar(200) not null unique,
+	album_url varchar(200),
+	created_date datetime default current_timestamp ,
+	updated_date datetime default current_timestamp 
+);	
+
+
+.open music.db
+
+drop table tracks;
+
+—————————————
+Table : Users
+—————————————
+create table users
+( 
+	user_name varchar(30) PRIMARY KEY,
+	hashed_password varchar(50) not null,
+	display_name text not null,
+	email_id text not null unique,
+	home_url text,
+	created_date datetime default current_timestamp ,
+	updated_date datetime default current_timestamp
+);
+
+
+—————————————
+Table : Playlists
+—————————————
+create table playlists
+(
+	playlist_id INTEGER PRIMARY KEY AUTOINCREMENT,
+	user_name varchar(30),
+	playlist_title varchar(50) not null,
+	description text,
+	created_date datetime default current_timestamp ,
+	updated_date datetime default current_timestamp,
+	FOREIGN KEY(user_name) references users(user_name),
+	CONSTRAINT playlists_UK UNIQUE(user_name,playlist_title)
+);
+
+create table playlist_tracks
+(
+	playlist_id INTEGER,
+	track_id varchar(500),
+	FOREIGN KEY(playlist_id) references playlists(playlist_id)
+);
+
+—————————————
+Table : Description
+—————————————
+
+create table descriptions
+(
+	desc_id INTEGER PRIMARY KEY AUTOINCREMENT,
+	user_name varchar(30),
+	track_id varchar(500), 
+	track_desc text not null,
+	created_date datetime default current_timestamp ,
+	updated_date datetime default current_timestamp,
+	FOREIGN KEY(user_name) references users(user_name)
+);
+
+

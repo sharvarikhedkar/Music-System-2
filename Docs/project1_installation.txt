@@ -1,0 +1,19 @@
+
+
+Installing Flask
+===================
+pip3 install Fask
+
+
+Installing tavern
+====================
+pip3 install tavern
+
+pip3 install tavern[pytest]
+
+
+foreman
+===========
+sudo apt install --yes ruby-foreman
+
+-------------------------------------------------

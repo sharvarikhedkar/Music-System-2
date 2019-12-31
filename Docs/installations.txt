@@ -1,0 +1,134 @@
+=> Project 1
+
+Installing Flask
+===================
+pip3 install Fask
+
+
+Installing tavern
+====================
+pip3 install tavern
+
+pip3 install tavern[pytest]
+
+
+foreman
+===========
+sudo apt install --yes ruby-foreman
+
+-------------------------------------------------
+
+=> Project 2
+
+minIO installation:
+==========================
+
+curl -O https://dl.minio.io/server/minio/release/linux-amd64/minio
+
+sudo chmod +x minio
+
+sudo mv minio /usr/local/bin
+sudo useradd -r minio-user -s /sbin/nologin
+sudo chown minio-user:minio-user /usr/local/bin/minio
+sudo mkdir /usr/local/share/minio
+sudo chown minio-user:minio-user /usr/local/share/minio
+
+sudo mkdir /etc/minio
+
+
+sudo chown minio-user:minio-user /etc/minio
+
+sudo nano /etc/default/minio
+
+[ MINIO_VOLUMES="/usr/local/share/minio/"
+ MINIO_OPTS="-C /etc/minio --address localhost:9000" ]
+ 
+ 
+ curl -O https://raw.githubusercontent.com/minio/minio-service/master/linux-systemd/minio.service
+
+nano minio.service
+
+sudo mv minio.service /etc/systemd/system
+
+sudo systemctl daemon-reload
+
+sudo systemctl enable minio
+
+sudo systemctl start minio
+
+sudo systemctl status minio
+
+sudo ufw allow 9000
+
+sudo systemctl restart ufw
+
+--to get secret and access key :
+/usr/local/share/minio/.minio.sys/config/config.json
+
+"accessKey": "FYSW7P5XQJWMW0EHHMNU",
+"secretKey": "jm8epFvaOsMt5luGsqUfKClxPnzUALfXd7KvNTWZ",
+
+----------------------------------------------------------------------
+
+Kong API Installation
+==============================
+sudo apt-get update
+
+sudo apt-get install openssl libpcre3 procps perl
+
+sudo dpkg -i kong-1.4.0.*.deb (go to the path where packge is downloaded)
+
+----
+sudo apt install --yes postgresql
+
+sudo -u postgres psql -c "CREATE USER kong WITH ENCRYPTED PASSWORD 'kong'"
+
+sudo -u postgres psql -c 'CREATE DATABASE kong OWNER kong'
+
+sudo cp /etc/kong/kong.conf.default /etc/kong/kong.conf
+
+----
+
+sudo kong migrations bootstrap
+
+ulimit -n 4096 && sudo kong start
+
+curl -i http://localhost:8001/
+
+--Adding new service and route to kong 
+
+1. Creating new service
+
+curl -i -X POST \
+  --url http://localhost:8001/services/ \
+  --data 'name=media' \
+  --data 'url=http://localhost:9000'
+  
+  
+2. Adding route
+
+curl -i -X POST \
+  --url http://localhost:8001/services/media/routes \
+  --data 'hosts[]=localhost'
+  
+3. forwarding request through kong
+
+curl -i -X GET \
+  --url http://localhost:8000/ \
+  --header 'Host: localhost'  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
